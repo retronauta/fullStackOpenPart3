@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 3001;
 
+app.use(express.json());
+
 const list = [
   {
     id: 1,
@@ -34,6 +36,12 @@ app.get("/api/persons", (req, res) => {
 
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${totalPeople} people</p> ${date}`);
+});
+
+app.get("/api/persons/:id", (req, res) => {
+  const { id } = req.params;
+  let note = list.find(person => person.id === Number(id));
+  note ? res.json(note) : res.status(404).end();
 });
 
 app.listen(PORT, () => console.log(`App is running at port ${PORT}`));
