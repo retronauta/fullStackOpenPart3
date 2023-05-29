@@ -25,8 +25,15 @@ const list = [
   },
 ];
 
+const totalPeople = list.length;
+const date = new Date();
+
 app.get("/api/persons", (req, res) => {
   res.json(list);
+});
+
+app.get("/info", (req, res) => {
+  res.send(`<p>Phonebook has info for ${totalPeople} people</p> ${date}`);
 });
 
 app.listen(PORT, () => console.log(`App is running at port ${PORT}`));
