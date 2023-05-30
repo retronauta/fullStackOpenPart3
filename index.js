@@ -27,6 +27,11 @@ let list = [
   },
 ];
 
+const genId = () => {
+  const id = Math.floor(Math.random() * 10000);
+  return id;
+};
+
 const totalPeople = list.length;
 const date = new Date();
 
@@ -42,6 +47,23 @@ app.get("/api/persons/:id", (req, res) => {
   const { id } = req.params;
   let person = list.find(person => person.id === Number(id));
   person ? res.json(person) : res.status(404).end();
+});
+
+app.post("/api/persons", (req, res) => {
+  const person = {
+    id: genId(),
+    name: req.body.name,
+    number: req.body.number,
+  };
+
+  if (!person.name || !person.number) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+
+  list = list.concat({ ...person, id: genId() });
+  res.json(person);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
