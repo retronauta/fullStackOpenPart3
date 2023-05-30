@@ -4,7 +4,7 @@ const PORT = 3001;
 
 app.use(express.json());
 
-const list = [
+let list = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -40,8 +40,14 @@ app.get("/info", (req, res) => {
 
 app.get("/api/persons/:id", (req, res) => {
   const { id } = req.params;
-  let note = list.find(person => person.id === Number(id));
-  note ? res.json(note) : res.status(404).end();
+  let person = list.find(person => person.id === Number(id));
+  person ? res.json(person) : res.status(404).end();
+});
+
+app.delete("/api/persons/:id", (req, res) => {
+  const { id } = req.params;
+  list = list.filter(person => person.id !== Number(id));
+  res.status(204).end();
 });
 
 app.listen(PORT, () => console.log(`App is running at port ${PORT}`));
