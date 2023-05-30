@@ -4,7 +4,11 @@ const morgan = require("morgan");
 const PORT = 3001;
 
 app.use(express.json());
-app.use(morgan("tiny"));
+morgan.token("body", req => {
+  return JSON.stringify(req.body);
+});
+
+app.use(morgan(":method :url :body"));
 
 let list = [
   {
