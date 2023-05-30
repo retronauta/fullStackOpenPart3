@@ -2,8 +2,12 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const PORT = 3001;
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
+
 morgan.token("body", req => {
   return JSON.stringify(req.body);
 });
