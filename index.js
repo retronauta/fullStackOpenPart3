@@ -25,11 +25,20 @@ let list = [
     name: "Mary Poppendieck",
     number: "39-23-6423122",
   },
+  {
+    id: 5,
+    name: "pepe",
+    number: "44324123",
+  },
 ];
 
 const genId = () => {
   const id = Math.floor(Math.random() * 10000);
   return id;
+};
+
+const findDuplicate = name => {
+  return list.find(person => person.name === name);
 };
 
 const totalPeople = list.length;
@@ -56,9 +65,9 @@ app.post("/api/persons", (req, res) => {
     number: req.body.number,
   };
 
-  if (!person.name || !person.number) {
+  if (!person.name || !person.number || findDuplicate(person.name)) {
     return res.status(400).json({
-      error: "content missing",
+      error: "content missing or name must be unique",
     });
   }
 
