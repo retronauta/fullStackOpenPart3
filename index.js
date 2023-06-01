@@ -1,7 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const PORT = process.env.PORT || 3001;
+const Contact = require("./models/contacts");
 const cors = require("cors");
 
 app.use(express.static("build"));
@@ -57,7 +59,7 @@ const totalPeople = list.length;
 const date = new Date();
 
 app.get("/api/persons", (req, res) => {
-  res.json(list);
+  Contact.find({}).then(contacts => res.json(contacts));
 });
 
 app.get("/info", (req, res) => {
