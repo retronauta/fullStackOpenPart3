@@ -73,20 +73,21 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const person = {
-    id: genId(),
-    name: req.body.name,
-    number: req.body.number,
-  };
+  const body = req.body;
+  console.log(body);
 
-  if (!person.name || !person.number || findDuplicate(person.name)) {
-    return res.status(400).json({
-      error: "content missing or name must be unique",
-    });
+  if (body.name === undefined) {
+    return res.status(400).json({ error: "content missing" });
   }
 
-  list = list.concat({ ...person, id: genId() });
-  res.json(person);
+  const contact = new Contact({
+    name: body.name,
+    number: body.number,
+  });
+
+  contact.save().then(savedContact => {
+    res.json(savedContact);
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
