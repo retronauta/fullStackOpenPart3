@@ -99,6 +99,21 @@ app.post("/api/persons", (req, res, next) => {
     .catch(error => next(error));
 });
 
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
+
+  const contact = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Contact.findByIdAndUpdate(req.params.id, contact, { new: true })
+    .then(updateNumber => {
+      res.json(updateNumber);
+    })
+    .catch(error => next(error));
+});
+
 app.delete("/api/persons/:id", (req, res, next) => {
   Contact.findByIdAndRemove(req.params.id)
     .then(result => res.status(204).end())
