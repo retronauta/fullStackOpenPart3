@@ -79,7 +79,7 @@ app.get("/api/persons/:id", (req, res) => {
   person ? res.json(person) : res.status(404).end();
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
   if (body.name === undefined) {
@@ -91,9 +91,12 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
   });
 
-  contact.save().then(savedContact => {
-    res.json(savedContact);
-  });
+  contact
+    .save()
+    .then(savedContact => {
+      res.json(savedContact);
+    })
+    .catch(error => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
