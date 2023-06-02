@@ -18,6 +18,11 @@ morgan.token("body", req => {
 
 app.use(morgan(":method :url :body"));
 
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message);
+  res.end();
+};
+
 let list = [
   {
     id: 1,
@@ -58,8 +63,10 @@ const findDuplicate = name => {
 const totalPeople = list.length;
 const date = new Date();
 
-app.get("/api/persons", (req, res) => {
-  Contact.find({}).then(contacts => res.json(contacts));
+app.get("/api/persons", (req, res, next) => {
+  Contact.find({})
+    .then(contacts => res.json(contacts))
+    .catch(error => next(error));
 });
 
 app.get("/info", (req, res) => {
@@ -89,10 +96,12 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const { id } = req.params;
-  list = list.filter(person => person.id !== Number(id));
-  res.status(204).end();
+app.delete("/api/persons/:id", (req, res, next) => {
+  Contact.findByIdAndRemove(req.params.id)
+    .then(result => res.status(204).end())
+    .catch(error => next(error));
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`App is running at port ${PORT}`));
