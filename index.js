@@ -12,56 +12,14 @@ app.use(cors());
 
 app.use(express.json());
 
-morgan.token("body", req => {
-  return JSON.stringify(req.body);
-});
+morgan.token("body", req => JSON.stringify(req.body));
 
 app.use(morgan(":method :url :body"));
 
 const errorHandler = (error, req, res, next) => {
   console.log(error.message);
-  res.end();
+  res.json({ error: error.message });
 };
-
-let list = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-  {
-    id: 5,
-    name: "pepe",
-    number: "44324123",
-  },
-];
-
-const genId = () => {
-  const id = Math.floor(Math.random() * 10000);
-  return id;
-};
-
-const findDuplicate = name => {
-  return list.find(person => person.name === name);
-};
-
-const totalPeople = list.length;
-const date = new Date();
 
 app.get("/api/persons", (req, res, next) => {
   Contact.find({})
@@ -69,14 +27,12 @@ app.get("/api/persons", (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.get("/info", (req, res) => {
-  res.send(`<p>Phonebook has info for ${totalPeople} people</p> ${date}`);
-});
-
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const { id } = req.params;
-  let person = list.find(person => person.id === Number(id));
-  person ? res.json(person) : res.status(404).end();
+
+  Contact.findById(id)
+    .then(contact => res.json(contact))
+    .catch(error => next(error));
 });
 
 app.post("/api/persons", (req, res, next) => {
@@ -93,9 +49,7 @@ app.post("/api/persons", (req, res, next) => {
 
   contact
     .save()
-    .then(savedContact => {
-      res.json(savedContact);
-    })
+    .then(savedContact => res.json(savedContact))
     .catch(error => next(error));
 });
 
@@ -108,9 +62,7 @@ app.put("/api/persons/:id", (req, res, next) => {
   };
 
   Contact.findByIdAndUpdate(req.params.id, contact, { new: true })
-    .then(updateNumber => {
-      res.json(updateNumber);
-    })
+    .then(updateNumber => res.json(updateNumber))
     .catch(error => next(error));
 });
 
