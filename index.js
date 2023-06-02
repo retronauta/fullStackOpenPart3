@@ -17,8 +17,12 @@ morgan.token("body", req => JSON.stringify(req.body));
 app.use(morgan(":method :url :body"));
 
 const errorHandler = (error, req, res, next) => {
-  console.log(error.message);
-  res.json({ error: error.message });
+  console.error(error.message);
+  if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
+  }
+
+  next(error);
 };
 
 app.get("/api/persons", (req, res, next) => {
@@ -37,10 +41,6 @@ app.get("/api/persons/:id", (req, res, next) => {
 
 app.post("/api/persons", (req, res, next) => {
   const body = req.body;
-
-  if (body.name === undefined) {
-    return res.status(400).json({ error: "content missing" });
-  }
 
   const contact = new Contact({
     name: body.name,
